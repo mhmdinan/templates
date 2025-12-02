@@ -1,0 +1,18 @@
+rvices:
+  postgres:
+    #image: postgres:latest # To download the latest image
+    #image: postgres:17.4-alpine # To download a specific version
+    image: postgres:alpine # To download alpine version
+    container_name: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: db1
+      POSTGRES_USER: dev1db
+      POSTGRES_PASSWORD: fFcGrDoVgw
+    ports:
+      - "5432:5432" # HOST_PORT:CONTAINER_PORT
+
+volumes:
+  pg_data:
+    external: true

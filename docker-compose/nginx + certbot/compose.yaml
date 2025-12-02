@@ -1,0 +1,27 @@
+services:
+  nginx:
+    image: nginx:mainline-alpine3.18-slim
+    restart: always
+    container_name: nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d/:ro
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf:/etc/certbot:ro
+      - ./sites:/usr/share/nginx/html:ro
+      - ./nginx-logs:/var/log/nginx
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - nginx_internal
+  certbot:
+    #image: certbot/certbot:v2.7.4 #normal for http challenge
+    image: certbot/dns-cloudflare:v4.1.1 #using cloudflare dns version
+    container_name: certbot
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - ./cloudflare.ini:/root/cloudflare.ini:ro
+networks:
+  nginx_internal: #use internal network to expose services
+    external: true
