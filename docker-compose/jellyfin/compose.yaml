@@ -1,0 +1,25 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    user: "1000:1000"
+    group_add: # add for intel igpu transcoding
+      - "993"  # adding render group
+      - "44"   # adding video group
+    devices:
+      - /dev/dri:/dev/dri  # intel igpu passthrough
+    volumes:
+      - ./config:/config          # Persistent Jellyfin configuration
+      - ./cache:/cache            # Transcoding cache
+      - ./media:/media            # Your media library (replace with path used)
+
+# HTTP port is disabled – everything goes through Nginx reverse proxy, uncomment if using directly
+#    ports:
+#      - 8096:8096/tcp
+    environment:
+      - PUID=1000                # use your uid
+      - PGID=1000                # use your gid
+      - TZ=Asia/Karachi         # e.g., America/New_York or Europe/London
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.example.com  # Your public domain if using nginx
+      - LIBVA_DRIVER_NAME=iHD    # mordern intel driver, recommended for Skylake +
+    restart: unless-stopped

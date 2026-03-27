@@ -1,0 +1,17 @@
+services:
+  runner:
+    image: gitea/act_runner:0.2.13
+    container_name: gitea-runner
+    restart: unless-stopped
+    environment:
+      - CONFIG_FILE=/config.yaml
+      - GITEA_INSTANCE_URL=https://git.example.com
+      - GITEA_RUNNER_REGISTRATION_TOKEN= #enter your gitea token taken from ui
+      - GITEA_RUNNER_NAME=gitea-runner
+#      - GITEA_RUNNER_LABELS: "${RUNNER_LABELS}" #using standard labels
+    volumes:
+      - ./gitea-home-runner-config.yaml:/config.yaml
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock #giving access to docker socket  for docker out of docker use
+
+
