@@ -1,0 +1,54 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    user: "1000:1000"
+    group_add: # add for intel igpu transcoding - following on debian OS
+      - "992" #render
+      - "44"  #video
+    devices:
+      - /dev/dri:/dev/dri  # Intel iGPU passthrough for Quick Sync (i5-6500)
+    volumes:
+      - ./config/jellyfin:/config  # Persistent Jellyfin configuration
+      - ./cache:/cache             # Transcoding cache
+      - ./media:/media             # Your media library (replace with path used)
+
+# HTTP port is disabled – everything goes through Nginx reverse proxy, uncomment if using directly
+#    ports:
+#      - 8096:8096/tcp
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Karachi
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.example.com
+      - LIBVA_DRIVER_NAME=iHD    # Force modern Intel media driver (recommended for Skylake+)
+    restart: unless-stopped
+    networks:
+      - nginx_internal
+
+  qbittorrent:
+    image: qbittorrentofficial/qbittorrent-nox:latest
+    container_name: qbittorrent-nox
+    environment:
+      - TZ=Asia/Karachi
+      - UMASK=000
+      - PUID=1000
+      - PGID=1000
+      - QBT_WEBUI_PORT=8080
+      - QBT_TORRENTING_PORT=6881
+    volumes:
+      - ./config/qbittorrent:/config    # Persistent qbittorrent configuration
+      - ./downloads:/downloads          # seperate folder for incomplete downloads
+      - ./media:/media                  # Your media library (replace with path used)
+    ports:
+      #- 8080:8080          # Web UI - exposed through nginx
+      - 6881:6881          # Torrent TCP
+      - 6881:6881/udp      # Torrent UDP
+    restart: unless-stopped
+    networks:
+      - nginx_internal
+
+networks:
+  nginx_internal:
+    external: true

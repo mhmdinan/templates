@@ -10,8 +10,8 @@ services:
       - GITEA_RUNNER_NAME=gitea-runner
 #      - GITEA_RUNNER_LABELS: "${RUNNER_LABELS}" #using standard labels
     volumes:
-      - ./gitea-home-runner-config.yaml:/config.yaml
+      - ./gitea-runner-config.yaml:/config.yaml
       - ./data:/data
-      - /var/run/docker.sock:/var/run/docker.sock #giving access to docker socket  for docker out of docker use
+      - /var/run/docker.sock:/var/run/docker.sock #giving access to docker socket for docker out of docker use
 
 

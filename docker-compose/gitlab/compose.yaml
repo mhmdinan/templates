@@ -1,0 +1,19 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:18.8.2-ee.0
+    container_name: gitlab
+    restart: unless-stopped
+    hostname: 'gitlab.home.mhmdinan.com'
+    ports:
+      - '2222:22'
+    volumes:
+      - './config:/etc/gitlab'
+      - './logs:/var/log/gitlab'
+      - './data:/var/opt/gitlab'
+    shm_size: '256m'
+    networks:
+      - nginx_internal
+
+networks:
+  nginx_internal:
+    external: true
