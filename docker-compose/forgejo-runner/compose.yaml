@@ -1,0 +1,24 @@
+services:
+  runner:
+    image: code.forgejo.org/forgejo/runner:12.7.2
+    container_name: forgejo-runner
+    restart: always
+#    user: "1000:1000"
+#    command: ["tail", "-f", "/dev/null"] # use when initially starting
+    command: "/bin/forgejo-runner --config /data/config.yml daemon"
+    group_add:
+      - 988
+    expose:
+      - "8080"
+    environment:
+#      - FORGEJO_INSTANCE_URL=
+#      - FORGEJO_RUNNER_TOKEN=
+#      - FORGEJO_RUNNER_NAME=forgejo-runner
+      - FORGEJO_RUNNER_WORKDIR=/root/.cache/act
+#      - FORGEJO_RUNNER_LABELS=ubuntu-latest:docker://node:20-bookworm,docker:docker://node:20-bookworm
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/data
+#      - ./config.yaml:/config.yaml
+      - ./act_cache:/root/.cache/act
+      - ./cache:/cache
